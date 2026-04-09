@@ -15,14 +15,4 @@ class FrontendController extends Controller
     {
         return view('frontend.dashboard');
     }
-
-    public function sliders(): View
-    {
-        return view('frontend.sliders');
-    }
-
-    public function products(): View
-    {
-        return view('frontend.products');
-    }
 }

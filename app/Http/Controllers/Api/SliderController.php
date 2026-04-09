@@ -4,38 +4,34 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Slider;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class SliderController extends Controller
 {
-    public function index(): JsonResponse
+    public function index()
     {
-        return new JsonResponse([
-            'data' => Slider::query()->orderBy('sort_order')->orderBy('id')->get(),
-        ]);
+        return response()->json(Slider::orderBy('sort_order')->get());
     }
 
-    public function show(int $id): JsonResponse
+    public function show($id)
     {
-        return new JsonResponse([
-            'data' => Slider::query()->findOrFail($id),
-        ]);
+        $slider = Slider::findOrFail($id);
+        return response()->json($slider);
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(Request $request)
     {
         $data = $request->validate([
-            'page_slug' => ['required', 'string', 'max:255'],
-            'section_key' => ['required', 'string', 'max:255'],
-            'title' => ['nullable', 'string', 'max:255'],
-            'subtitle' => ['nullable', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'html_content' => ['nullable', 'string'],
-            'link' => ['nullable', 'string', 'max:255'],
-            'sort_order' => ['nullable', 'integer', 'min:0'],
-            'image' => ['nullable', 'file', 'image', 'max:5120'],
+            'page_slug' => 'required|string',
+            'section_key' => 'required|string',
+            'title' => 'nullable|string',
+            'subtitle' => 'nullable|string',
+            'description' => 'nullable|string',
+            'html_content' => 'nullable|string',
+            'link' => 'nullable|string',
+            'sort_order' => 'nullable|integer',
+            'image' => 'nullable|file|image|max:5120',
         ]);
 
         if ($request->hasFile('image')) {
@@ -43,28 +39,25 @@ class SliderController extends Controller
             $data['image'] = $path;
         }
 
-        $slider = Slider::query()->create($data);
+        $slider = Slider::create($data);
 
-        return new JsonResponse([
-            'message' => 'Slider created.',
-            'data' => $slider,
-        ], 201);
+        return response()->json($slider, 201);
     }
 
-    public function update(Request $request, int $id): JsonResponse
+    public function update(Request $request, $id)
     {
-        $slider = Slider::query()->findOrFail($id);
+        $slider = Slider::findOrFail($id);
 
         $data = $request->validate([
-            'page_slug' => ['required', 'string', 'max:255'],
-            'section_key' => ['required', 'string', 'max:255'],
-            'title' => ['nullable', 'string', 'max:255'],
-            'subtitle' => ['nullable', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'html_content' => ['nullable', 'string'],
-            'link' => ['nullable', 'string', 'max:255'],
-            'sort_order' => ['nullable', 'integer', 'min:0'],
-            'image' => ['nullable', 'file', 'image', 'max:5120'],
+            'page_slug' => 'required|string',
+            'section_key' => 'required|string',
+            'title' => 'nullable|string',
+            'subtitle' => 'nullable|string',
+            'description' => 'nullable|string',
+            'html_content' => 'nullable|string',
+            'link' => 'nullable|string',
+            'sort_order' => 'nullable|integer',
+            'image' => 'nullable|file|image|max:5120',
         ]);
 
         if ($request->hasFile('image')) {
@@ -77,22 +70,17 @@ class SliderController extends Controller
 
         $slider->update($data);
 
-        return new JsonResponse([
-            'message' => 'Slider updated.',
-            'data' => $slider->fresh(),
-        ]);
+        return response()->json($slider);
     }
 
-    public function destroy(int $id): JsonResponse
+    public function destroy($id)
     {
-        $slider = Slider::query()->findOrFail($id);
+        $slider = Slider::findOrFail($id);
         if ($slider->image) {
             Storage::disk('public')->delete($slider->image);
         }
         $slider->delete();
 
-        return new JsonResponse([
-            'message' => 'Slider deleted.',
-        ]);
+        return response()->json(null, 204);
     }
 }
