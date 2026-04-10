@@ -49,9 +49,10 @@
 async function fetchSliders(){
     const res = await fetch('/sliders', { headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') } });
     const data = await res.json();
+    const rows = Array.isArray(data) ? data : (data.data || []);
     const list = document.getElementById('list');
     list.innerHTML = '';
-    data.forEach(s => {
+    rows.forEach(s => {
         const el = document.createElement('div');
         el.innerHTML = `<h3>${s.title || ''}</h3><div>${s.subtitle||''}</div><div>${s.html_content||s.description||''}</div><div>${s.link||''}</div><div>${s.image?'<img src="/storage/'+s.image+'" style="max-width:200px"/>':''}</div><button data-id="${s.id}" class="edit">Edit</button> <button data-id="${s.id}" class="del">Delete</button>`;
         list.appendChild(el);
@@ -62,7 +63,8 @@ async function fetchSliders(){
 
 async function editItem(id){
     const res = await fetch('/sliders/'+id, { headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') } });
-    const s = await res.json();
+    const raw = await res.json();
+    const s = raw.data || raw;
     document.getElementById('slider-id').value = s.id;
     document.getElementById('page_slug').value = s.page_slug;
     document.getElementById('section_key').value = s.section_key;

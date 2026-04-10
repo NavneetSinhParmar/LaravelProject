@@ -15,6 +15,8 @@ Route::get('/login', [FrontendController::class, 'login'])->name('frontend.login
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [FrontendController::class, 'dashboard'])->name('frontend.dashboard');
+    Route::get('/dashboard/sliders', [FrontendController::class, 'sliders'])->name('frontend.sliders');
+    Route::get('/dashboard/products', [FrontendController::class, 'products'])->name('frontend.products');
 
     Route::resource('users', UserController::class);
 
@@ -32,9 +34,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/sliders', [SliderController::class, 'index']);
     Route::get('/sliders/{id}', [SliderController::class, 'show']);
     Route::post('/sliders', [SliderController::class, 'store']);
-    Route::post('/sliders/{id}', [SliderController::class, 'update']);
+    Route::match(['put', 'post'], '/sliders/{id}', [SliderController::class, 'update']);
     Route::delete('/sliders/{id}', [SliderController::class, 'destroy']);
 });
 
 // Web endpoint to accept API token and create a session
 Route::post('/web/login', [WebAuthController::class, 'tokenLogin']);
+Route::post('/web/logout', [WebAuthController::class, 'logout']);

@@ -19,7 +19,8 @@ Route::middleware('api.token')->group(function (): void {
     Route::apiResource('portfolio', PortfolioController::class);
     Route::apiResource('products', ProductController::class);
     Route::apiResource('sliders', SliderController::class);
+    // Multipart image updates: POST with FormData (PUT + multipart is unreliable).
+    Route::post('sliders/{id}', [SliderController::class, 'update']);
 });
 
 Route::get('/cms', [CmsPageController::class, 'index']);
-Route::get('/sliders', [SliderController::class, 'index']);

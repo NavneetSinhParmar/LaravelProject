@@ -34,7 +34,7 @@
     <script>
         const token = localStorage.getItem('api_token');
         if (token) {
-            window.location.href = '/dashboard';
+            window.location.href = @json(route('frontend.dashboard'));
         }
 
         document.getElementById('login-form').addEventListener('submit', async (event) => {
@@ -47,7 +47,7 @@
             const password = document.getElementById('password').value;
 
             try {
-                const response = await fetch('/api/login', {
+                const response = await fetch(@json(url('/api/login')), {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -56,26 +56,49 @@
                     body: JSON.stringify({ email, password })
                 });
 
-                const data = await response.json();
+                const raw = await response.text();
+                let data = {};
+                if (raw) {
+                    try {
+                        data = JSON.parse(raw);
+                    } catch (e) {
+                        throw new Error('Login response was not JSON. Check server errors.');
+                    }
+                }
+
                 if (!response.ok || !data.token) {
                     throw new Error(data.message || 'Login failed.');
                 }
 
-                localStorage.setItem('api_token', data.token);
-
-                // Create a web session so Laravel's `auth` middleware works for /dashboard
-                await fetch('/web/login', {
+                const sessionRes = await fetch(@json(url('/web/login')), {
                     method: 'POST',
                     credentials: 'same-origin',
                     headers: {
                         'Content-Type': 'application/json',
+                        'Accept': 'application/json',
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                     },
                     body: JSON.stringify({ token: data.token })
                 });
 
-                window.location.href = '/dashboard';
+                const sessionRaw = await sessionRes.text();
+                let sessionData = {};
+                if (sessionRaw) {
+                    try {
+                        sessionData = JSON.parse(sessionRaw);
+                    } catch (e) {
+                        sessionData = {};
+                    }
+                }
+
+                if (!sessionRes.ok) {
+                    throw new Error(sessionData.message || 'Could not start web session (CSRF or /web/login failed).');
+                }
+
+                localStorage.setItem('api_token', data.token);
+                window.location.href = @json(route('frontend.dashboard'));
             } catch (error) {
+                localStorage.removeItem('api_token');
                 errorEl.textContent = error.message;
             }
         });
