@@ -32,11 +32,6 @@
     </div>
 
     <script>
-        const token = localStorage.getItem('api_token');
-        if (token) {
-            window.location.href = @json(route('frontend.dashboard'));
-        }
-
         document.getElementById('login-form').addEventListener('submit', async (event) => {
             event.preventDefault();
 

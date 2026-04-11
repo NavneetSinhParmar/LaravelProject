@@ -43,13 +43,6 @@
     @stack('head')
 </head>
 <body>
-    <script>
-        (function () {
-            if (!localStorage.getItem('api_token')) {
-                window.location.replace(@json(route('frontend.login')));
-            }
-        })();
-    </script>
     <div class="shell">
         <div class="top">
             <div class="brand">Admin</div>
@@ -89,6 +82,19 @@
                 };
             }
 
+            async function webLogout() {
+                const csrf = document.querySelector('meta[name="csrf-token"]');
+                const hdr = csrf ? csrf.getAttribute('content') : '';
+                await fetch('{{ url('/web/logout') }}', {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': hdr
+                    }
+                }).catch(function () {});
+            }
+
             async function apiFetch(url, options = {}) {
                 const response = await fetch(url, options);
                 const text = await response.text();
@@ -103,7 +109,10 @@
 
                 if (response.status === 401) {
                     localStorage.removeItem(tokenKey);
-                    window.location.href = @json(route('frontend.login'));
+                    // Clear Laravel web session so /login does not fight a stale session (infinite refresh loop).
+                    await webLogout();
+                    const loginUrl = @json(route('login'));
+                    window.location.replace(loginUrl + (loginUrl.indexOf('?') >= 0 ? '&' : '?') + 'reauth=1');
                     return null;
                 }
 
@@ -129,19 +138,6 @@
                 return data;
             }
 
-            async function webLogout() {
-                const csrf = document.querySelector('meta[name="csrf-token"]');
-                const token = csrf ? csrf.getAttribute('content') : '';
-                await fetch('{{ url('/web/logout') }}', {
-                    method: 'POST',
-                    credentials: 'same-origin',
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': token
-                    }
-                }).catch(function () {});
-            }
-
             async function apiLogout() {
                 const t = getToken();
                 if (!t) {
@@ -157,7 +153,7 @@
                 await apiLogout();
                 await webLogout();
                 localStorage.removeItem(tokenKey);
-                window.location.href = @json(route('frontend.login'));
+                window.location.href = @json(route('login'));
             });
 
             window.FrontendApi = {

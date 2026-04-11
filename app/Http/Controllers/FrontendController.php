@@ -3,11 +3,24 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class FrontendController extends Controller
 {
-    public function login(): View
+    public function login(Request $request): View|RedirectResponse
     {
+        if ($request->boolean('reauth')) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+        }
+
+        if (Auth::check()) {
+            return redirect()->route('frontend.dashboard');
+        }
+
         return view('frontend.login');
     }
 

@@ -12,6 +12,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Override framework default `route('login')` so guests never hit RouteNotFound if routes change.
+        $middleware->redirectGuestsTo('/login');
         $middleware->alias([
             'api.token' => \App\Http\Middleware\ApiTokenAuth::class,
         ]);

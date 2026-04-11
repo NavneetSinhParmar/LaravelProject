@@ -8,10 +8,11 @@ use App\Http\Controllers\WebAuthController;
 
 
 Route::get('/', function () {
-    return redirect()->route('frontend.login');
+    return redirect()->route('login');
 });
 
-Route::get('/login', [FrontendController::class, 'login'])->name('frontend.login');
+/** Laravel's `auth` middleware and the framework default `redirectGuestsTo` expect a route named `login`. */
+Route::get('/login', [FrontendController::class, 'login'])->name('login');
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [FrontendController::class, 'dashboard'])->name('frontend.dashboard');
