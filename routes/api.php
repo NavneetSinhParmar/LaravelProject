@@ -9,17 +9,26 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('api.token')->group(function (): void {
+    // Auth API
     Route::post('/logout', [AuthController::class, 'logout']);
+
+    // User profile API
     Route::get('/profile', [AuthController::class, 'profile']);
 
     Route::post('/cms', [CmsPageController::class, 'store']);
     Route::put('/cms/{id}', [CmsPageController::class, 'update']);
     Route::delete('/cms/{id}', [CmsPageController::class, 'destroy']);
 
+    // Portfolio API (categories route must be before {id} resource)
+    Route::get('portfolio-categories', [PortfolioController::class, 'categories']);
     Route::apiResource('portfolio', PortfolioController::class);
+    Route::post('portfolio/{portfolio}', [PortfolioController::class, 'update']);
+
+    // product API routes for token-based auth (used by mobile app)
     Route::apiResource('products', ProductController::class);
+
+    // slider API routes for token-based auth (used by mobile app)
     Route::apiResource('sliders', SliderController::class);
-    // Multipart image updates: POST with FormData (PUT + multipart is unreliable).
     Route::post('sliders/{id}', [SliderController::class, 'update']);
 });
 

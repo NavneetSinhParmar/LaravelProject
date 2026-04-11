@@ -18,6 +18,13 @@
             </div>
         </div>
         <div class="card" style="margin-bottom:0;">
+            <h2>Portfolio</h2>
+            <p class="muted">Create, edit (with image upload), list, and delete portfolio items.</p>
+            <div class="actions" style="margin-top:12px;">
+                <a class="btn" href="{{ route('frontend.portfolio') }}">Open Portfolio</a>
+            </div>
+        </div>
+        <div class="card" style="margin-bottom:0;">
             <h2>Products</h2>
             <p class="muted">Full CRUD plus detail view from <code>GET /api/products/{id}</code>.</p>
             <div class="actions" style="margin-top:12px;">

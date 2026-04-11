@@ -49,6 +49,7 @@
             <nav>
                 <a href="{{ route('frontend.dashboard') }}" class="{{ request()->routeIs('frontend.dashboard') ? 'active' : '' }}">Dashboard</a>
                 <a href="{{ route('frontend.sliders') }}" class="{{ request()->routeIs('frontend.sliders') ? 'active' : '' }}">Sliders</a>
+                <a href="{{ route('frontend.portfolio') }}" class="{{ request()->routeIs('frontend.portfolio') ? 'active' : '' }}">Portfolio</a>
                 <a href="{{ route('frontend.products') }}" class="{{ request()->routeIs('frontend.products') ? 'active' : '' }}">Products</a>
                 <button type="button" class="danger" id="nav-logout">Logout</button>
             </nav>
