@@ -5,6 +5,8 @@ use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Api\SliderController;
 use App\Http\Controllers\WebAuthController;
+use App\Http\Controllers\Api\ClientsController;
+use App\Http\Controllers\Api\TestimonialsController;
 
 
 Route::get('/', function () {
@@ -19,6 +21,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [FrontendController::class, 'dashboard'])->name('frontend.dashboard');
 
     Route::get('/dashboard/sliders', [FrontendController::class, 'sliders'])->name('frontend.sliders');
+    Route::get('/dashboard/clients', [FrontendController::class, 'clients'])->name('frontend.clients');
+    Route::get('/dashboard/testimonials', [FrontendController::class, 'testimonials'])->name('frontend.testimonials');
     Route::get('/dashboard/products', [FrontendController::class, 'products'])->name('frontend.products');
 
     // NEW: Portfolio Page
@@ -42,6 +46,23 @@ Route::middleware('auth')->group(function () {
     Route::match(['put', 'post'], '/sliders/{id}', [SliderController::class, 'update']);
     Route::delete('/sliders/{id}', [SliderController::class, 'destroy']);
 
+    // =========================
+    // Clients CRUD (web)
+    // =========================
+    Route::get('/Clients', [ClientsController::class, 'index']);
+    Route::get('/Clients/{id}', [ClientsController::class, 'show']);
+    Route::post('/Clients', [ClientsController::class, 'store']);
+    Route::match(['put', 'post'], '/Clients/{id}', [ClientsController::class, 'update']);
+    Route::delete('/Clients/{id}', [ClientsController::class, 'destroy']);
+
+    // =========================
+    // testimonials CRUD (web)
+    // =========================
+    Route::get('/testimonials', [TestimonialsController::class, 'index']);
+    Route::get('/testimonials/{id}', [TestimonialsController::class, 'show']);
+    Route::post('/testimonials', [TestimonialsController::class, 'store']);
+    Route::match(['put', 'post'], '/testimonials/{id}', [TestimonialsController::class, 'update']);
+    Route::delete('/testimonials/{id}', [TestimonialsController::class, 'destroy']);
 });
 
 // Web endpoint to accept API token and create a session

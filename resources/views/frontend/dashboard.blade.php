@@ -31,6 +31,20 @@
                 <a class="btn" href="{{ route('frontend.products') }}">Open Products</a>
             </div>
         </div>
+        <div class="card" style="margin-bottom:0;">
+            <h2>Clients</h2>
+            <p class="muted">Full CRUD plus detail view from <code>GET /api/Clients/{id}</code>.</p>
+            <div class="actions" style="margin-top:12px;">
+                <a class="btn" href="{{ route('frontend.clients') }}">Open Clients</a>
+            </div>
+        </div>
+        <div class="card" style="margin-bottom:0;">
+            <h2>Testimonials</h2>
+            <p class="muted">Full CRUD plus detail view from <code>GET /api/testimonials/{id}</code>.</p>
+            <div class="actions" style="margin-top:12px;">
+                <a class="btn" href="{{ route('frontend.testimonials') }}">Open Testimonials</a>
+            </div>
+        </div>
     </div>
 @endsection
 

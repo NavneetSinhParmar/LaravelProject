@@ -51,6 +51,9 @@
                 <a href="{{ route('frontend.sliders') }}" class="{{ request()->routeIs('frontend.sliders') ? 'active' : '' }}">Sliders</a>
                 <a href="{{ route('frontend.portfolio') }}" class="{{ request()->routeIs('frontend.portfolio') ? 'active' : '' }}">Portfolio</a>
                 <a href="{{ route('frontend.products') }}" class="{{ request()->routeIs('frontend.products') ? 'active' : '' }}">Products</a>
+                <a href="{{ route('frontend.clients') }}" class="{{ request()->routeIs('frontend.clients') ? 'active' : '' }}">Clients</a>
+                <a href="{{ route('frontend.testimonials') }}" class="{{ request()->routeIs('frontend.testimonials') ? 'active' : '' }}">Testimonials</a>
+
                 <button type="button" class="danger" id="nav-logout">Logout</button>
             </nav>
         </div>

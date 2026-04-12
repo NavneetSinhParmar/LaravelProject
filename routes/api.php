@@ -5,6 +5,8 @@ use App\Http\Controllers\Api\CmsPageController;
 use App\Http\Controllers\Api\PortfolioController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\SliderController;
+use App\Http\Controllers\Api\ClientsController;
+use App\Http\Controllers\Api\TestimonialsController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -30,6 +32,15 @@ Route::middleware('api.token')->group(function (): void {
     // slider API routes for token-based auth (used by mobile app)
     Route::apiResource('sliders', SliderController::class);
     Route::post('sliders/{id}', [SliderController::class, 'update']);
+
+    // Clients API routes for token-based auth
+    Route::apiResource('clients', ClientsController::class);
+    Route::post('clients/{client}', [ClientsController::class, 'update']);
+
+    // testimonial API routes for token-based auth
+    Route::apiResource('testimonials', TestimonialsController::class);
+    Route::post('testimonials/{testimonial}', [TestimonialsController::class, 'update']);
+
 });
 
 Route::get('/cms', [CmsPageController::class, 'index']);
