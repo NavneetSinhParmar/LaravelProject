@@ -8,6 +8,31 @@ use App\Http\Controllers\WebAuthController;
 use App\Http\Controllers\Api\ClientsController;
 use App\Http\Controllers\Api\TestimonialsController;
 
+// Route::get('/check-db', function () {
+//     try {
+//         DB::connection()->getPdo();
+//         return 'DB Connected! Database: ' . DB::connection()->getDatabaseName();
+//     } catch (\Exception $e) {
+//         return 'DB Error: ' . $e->getMessage();
+//     }
+// });
+
+// Route::get('/run-migrate', function () {
+//     Artisan::call('migrate:fresh', ['--force' => true]);
+//     return Artisan::output();
+// });
+
+// Route::get('/clear-config', function () {
+//     Artisan::call('config:clear');
+//     Artisan::call('cache:clear');
+//     return 'Cleared!';
+// });
+
+// Route::get('/run-seed', function () {
+//     Artisan::call('db:seed', ['--force' => true]);
+//     return Artisan::output();  // shows result
+// });
+
 
 Route::get('/', function () {
     return redirect()->route('login');
