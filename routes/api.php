@@ -10,6 +10,23 @@ use App\Http\Controllers\Api\TestimonialsController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [AuthController::class, 'login']);
+// Public GET endpoints restricted by allowed origin and method
+Route::middleware(\App\Http\Middleware\RestrictApiByOrigin::class)->group(function (): void {
+    Route::get('sliders', [SliderController::class, 'index']);
+    Route::get('sliders/{id}', [SliderController::class, 'show']);
+
+    Route::get('portfolio', [PortfolioController::class, 'index']);
+    Route::get('portfolio/{id}', [PortfolioController::class, 'show']);
+
+    Route::get('products', [ProductController::class, 'index']);
+    Route::get('products/{id}', [ProductController::class, 'show']);
+
+    Route::get('clients', [ClientsController::class, 'index']);
+    Route::get('clients/{id}', [ClientsController::class, 'show']);
+
+    Route::get('testimonials', [TestimonialsController::class, 'index']);
+    Route::get('testimonials/{id}', [TestimonialsController::class, 'show']);
+});
 Route::middleware('api.token')->group(function (): void {
     // Auth API
     Route::post('/logout', [AuthController::class, 'logout']);
