@@ -88,6 +88,12 @@
 
     <div class="card">
         <h2>All portfolio items</h2>
+        <div style="display:flex;gap:12px;align-items:center;margin-bottom:8px;">
+            <label for="pf-filter-category">Filter category</label>
+            <select id="pf-filter-category" style="max-width:280px;">
+                <option value="">All categories</option>
+            </select>
+        </div>
         <div style="overflow:auto;">
             <table>
                 <thead>
@@ -123,6 +129,7 @@
             const saveBtn = document.getElementById('pf-save-btn');
             const formTitle = document.getElementById('form-title');
             const categorySelect = document.getElementById('pf-category-id');
+            const filterCategory = document.getElementById('pf-filter-category');
 
             function setMsg(text, isError) {
                 msgEl.textContent = text || '';
@@ -230,13 +237,34 @@
                     const rows = (res && res.data) ? res.data : [];
                     const keep = categorySelect.querySelector('option[value=""]');
                     categorySelect.innerHTML = '';
-                    categorySelect.appendChild(keep);
+                    if (keep) categorySelect.appendChild(keep);
+
+                    const filterEl = filterCategory || document.getElementById('pf-filter-category');
+                    if (filterEl) {
+                        filterEl.innerHTML = '';
+                        const allOpt = document.createElement('option');
+                        allOpt.value = '';
+                        allOpt.textContent = 'All categories';
+                        filterEl.appendChild(allOpt);
+                    }
+
                     rows.forEach(function (c) {
                         const opt = document.createElement('option');
                         opt.value = String(c.id);
                         opt.textContent = c.name + ' (#' + c.id + ')';
                         categorySelect.appendChild(opt);
+
+                        if (filterEl) {
+                            const fo = document.createElement('option');
+                            fo.value = String(c.id);
+                            fo.textContent = c.name + ' (#' + c.id + ')';
+                            filterEl.appendChild(fo);
+                        }
                     });
+
+                    if (filterEl) {
+                        filterEl.addEventListener('change', loadTable);
+                    }
                 } catch (e) {
                     /* optional — table may be empty */
                 }
@@ -248,11 +276,18 @@
                     headers: window.FrontendApi.authHeadersJson()
                 });
                 const rows = (res && res.data) ? res.data : [];
-                if (!rows.length) {
+                const filterVal = (filterCategory && filterCategory.value) ? String(filterCategory.value) : '';
+                const filtered = !filterVal ? rows : rows.filter(function (d) {
+                    if (!d) return false;
+                    if (d.category_id && String(d.category_id) === filterVal) return true;
+                    if (d.category && String(d.category.id) === filterVal) return true;
+                    return false;
+                });
+                if (!filtered.length) {
                     tableEl.innerHTML = '<tr><td colspan="8" class="muted">No portfolio items yet.</td></tr>';
                     return;
                 }
-                tableEl.innerHTML = rows.map(function (d) {
+                tableEl.innerHTML = filtered.map(function (d) {
                     const img = d.image
                         ? '<img class="thumb" src="' + imageUrl(d.image) + '" alt="">'
                         : '<span class="muted">—</span>';

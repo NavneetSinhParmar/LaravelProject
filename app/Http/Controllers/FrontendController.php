@@ -39,6 +39,11 @@ class FrontendController extends Controller
         return view('frontend.portfolio');
     }
 
+    public function categories(): View
+    {
+        return view('frontend.categories');
+    }
+
     public function clients(): View
     {
         return view('frontend.clients');

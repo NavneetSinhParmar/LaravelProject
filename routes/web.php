@@ -52,6 +52,7 @@ Route::middleware('auth')->group(function () {
 
     // NEW: Portfolio Page
     Route::get('/dashboard/portfolio', [FrontendController::class, 'portfolio'])->name('frontend.portfolio');
+    Route::get('/dashboard/categories', [FrontendController::class, 'categories'])->name('frontend.categories');
 
     Route::resource('users', UserController::class);
 

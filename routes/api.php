@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CmsPageController;
 use App\Http\Controllers\Api\PortfolioController;
+use App\Http\Controllers\Api\CategoriesController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\SliderController;
 use App\Http\Controllers\Api\ClientsController;
@@ -17,6 +18,7 @@ Route::middleware(\App\Http\Middleware\RestrictApiByOrigin::class)->group(functi
 
     Route::get('portfolio', [PortfolioController::class, 'index']);
     Route::get('portfolio/{id}', [PortfolioController::class, 'show']);
+    Route::get('categories', [PortfolioController::class, 'categories']);
 
     Route::get('products', [ProductController::class, 'index']);
     Route::get('products/{id}', [ProductController::class, 'show']);
@@ -40,6 +42,8 @@ Route::middleware('api.token')->group(function (): void {
 
     // Portfolio API (categories route must be before {id} resource)
     Route::get('portfolio-categories', [PortfolioController::class, 'categories']);
+    Route::apiResource('categories', CategoriesController::class);
+    Route::post('categories/{category}', [CategoriesController::class, 'update']);
     Route::apiResource('portfolio', PortfolioController::class);
     Route::post('portfolio/{portfolio}', [PortfolioController::class, 'update']);
 
