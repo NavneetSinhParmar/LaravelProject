@@ -22,7 +22,9 @@
             <div class="row">
                 <div>
                     <label for="page_slug">Page slug</label>
-                    <input id="page_slug" name="page_slug" value="home" required>
+                    <select id="page_slug" name="page_slug" required>
+                        <option value="">Loading…</option>
+                    </select>
                 </div>
 
                 <div>
@@ -139,7 +141,14 @@
         formEl.reset();
 
         document.getElementById('category-id').value = '';
-        document.getElementById('page_slug').value = 'home';
+        // select first available page slug or fallback to 'home'
+        const ps = document.getElementById('page_slug');
+        if (ps && ps.options.length) {
+            ps.selectedIndex = 0;
+        } else if (ps) {
+            ps.innerHTML = '<option value="home">home</option>';
+            ps.value = 'home';
+        }
         document.getElementById('sort_order').value = '0';
         document.getElementById('status').value = '1';
 
@@ -152,7 +161,10 @@
     function fillForm(c) {
 
         document.getElementById('category-id').value = c.id;
-        document.getElementById('page_slug').value = c.page_slug || 'home';
+        const ps = document.getElementById('page_slug');
+        if (ps) {
+            try { ps.value = c.page_slug || ps.options[0]?.value || 'home'; } catch(e) { ps.value = c.page_slug || 'home'; }
+        }
         document.getElementById('sort_order').value = String(c.sort_order ?? 0);
         document.getElementById('status').value = String(c.status ?? 1);
 
@@ -236,6 +248,25 @@
                 </tr>
             `;
         }).join('');
+    }
+
+    async function loadPageSlugs() {
+        try {
+            const res = await window.FrontendApi.apiFetch('{{ url('/api/page-slugs') }}', { method: 'GET' });
+            const items = (res && res.data) ? res.data : [];
+            const sel = document.getElementById('page_slug');
+            if (!sel) return;
+            if (!items.length) {
+                sel.innerHTML = '<option value="home">home</option>';
+                return;
+            }
+            sel.innerHTML = items.map(function (p) {
+                return `<option value="${p.slug}">${p.name} → ${p.slug}</option>`;
+            }).join('');
+        } catch (err) {
+            const sel = document.getElementById('page_slug');
+            if (sel) sel.innerHTML = '<option value="home">home</option>';
+        }
     }
 
     formEl.addEventListener('submit', async function (e) {
@@ -389,7 +420,10 @@
         }
     });
 
-    loadTable().catch(function (err) {
+    // Load page slugs first, then categories
+    loadPageSlugs().then(function () {
+        return loadTable();
+    }).catch(function (err) {
 
         tableEl.innerHTML = `
             <tr>

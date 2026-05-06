@@ -47,14 +47,45 @@
         <div class="top">
             <div class="brand">Admin</div>
             <nav>
-                <a href="{{ route('frontend.dashboard') }}" class="{{ request()->routeIs('frontend.dashboard') ? 'active' : '' }}">Dashboard</a>
-                <a href="{{ route('frontend.sliders') }}" class="{{ request()->routeIs('frontend.sliders') ? 'active' : '' }}">Sliders</a>
-                <a href="{{ route('frontend.portfolio') }}" class="{{ request()->routeIs('frontend.portfolio') ? 'active' : '' }}">Portfolio</a>
-                <a href="{{ route('frontend.products') }}" class="{{ request()->routeIs('frontend.products') ? 'active' : '' }}">Products</a>
-                <a href="{{ route('frontend.categories') }}" class="{{ request()->routeIs('frontend.categories') ? 'active' : '' }}">Categories</a>
-                <a href="{{ route('frontend.clients') }}" class="{{ request()->routeIs('frontend.clients') ? 'active' : '' }}">Clients</a>
-                <a href="{{ route('frontend.testimonials') }}" class="{{ request()->routeIs('frontend.testimonials') ? 'active' : '' }}">Testimonials</a>
-                <button type="button" class="danger" id="nav-logout">Logout</button>
+                @auth
+                    @if (Route::has('frontend.dashboard'))
+                        <a href="{{ route('frontend.dashboard') }}" class="{{ request()->routeIs('frontend.dashboard') ? 'active' : '' }}">Dashboard</a>
+                    @endif
+
+                    @if (Route::has('frontend.sliders'))
+                        <a href="{{ route('frontend.sliders') }}" class="{{ request()->routeIs('frontend.sliders') ? 'active' : '' }}">Sliders</a>
+                    @endif
+
+                    @if (Route::has('frontend.portfolio'))
+                        <a href="{{ route('frontend.portfolio') }}" class="{{ request()->routeIs('frontend.portfolio') ? 'active' : '' }}">Portfolio</a>
+                    @endif
+
+                    @if (Route::has('frontend.products'))
+                        <a href="{{ route('frontend.products') }}" class="{{ request()->routeIs('frontend.products') ? 'active' : '' }}">Products</a>
+                    @endif
+
+                    @if (Route::has('frontend.categories'))
+                        <a href="{{ route('frontend.categories') }}" class="{{ request()->routeIs('frontend.categories') ? 'active' : '' }}">Categories</a>
+                    @endif
+
+                    @if (Route::has('frontend.clients'))
+                        <a href="{{ route('frontend.clients') }}" class="{{ request()->routeIs('frontend.clients') ? 'active' : '' }}">Clients</a>
+                    @endif
+
+                    @if (Route::has('frontend.testimonials'))
+                        <a href="{{ route('frontend.testimonials') }}" class="{{ request()->routeIs('frontend.testimonials') ? 'active' : '' }}">Testimonials</a>
+                    @endif
+
+                    @if (Route::has('frontend.faq'))
+                        <a href="{{ route('frontend.faq') }}" class="{{ request()->routeIs('frontend.faq') ? 'active' : '' }}">FAQ</a>
+                    @endif
+
+                    @if (Route::has('frontend.pageslug'))
+                        <a href="{{ route('frontend.pageslug') }}" class="{{ request()->routeIs('frontend.pageslug') ? 'active' : '' }}">page slug</a>
+                    @endif
+
+                    <button type="button" class="danger" id="nav-logout">Logout</button>
+                @endauth
             </nav>
         </div>
 

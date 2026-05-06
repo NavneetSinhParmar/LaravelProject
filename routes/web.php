@@ -54,6 +54,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/portfolio', [FrontendController::class, 'portfolio'])->name('frontend.portfolio');
     Route::get('/dashboard/categories', [FrontendController::class, 'categories'])->name('frontend.categories');
 
+    // Page Slugs admin UI
+    Route::get('/dashboard/pageslug', function () {
+        return view('frontend.page-slugs');
+    })->name('frontend.pageslug');
+
+    // FAQs admin UI
+    Route::get('/dashboard/faq', function () {
+        return view('frontend.faqs');
+    })->name('frontend.faq');
+
     Route::resource('users', UserController::class);
 
     // Slider UI
