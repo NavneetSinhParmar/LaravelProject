@@ -31,7 +31,9 @@
             <div class="row">
                 <div>
                     <label for="pf-page-slug">Page slug</label>
-                    <input id="pf-page-slug" maxlength="255" placeholder="e.g. home" value="home">
+                    <select id="pf-page-slug" required>
+                        <option value="">Loading…</option>
+                    </select>
                 </div>
                 <div>
                     <label for="pf-category-id">Category</label>
@@ -145,7 +147,7 @@
             function resetForm() {
                 formEl.reset();
                 document.getElementById('portfolio-id').value = '';
-                document.getElementById('pf-page-slug').value = 'home';
+                // document.getElementById('pf-page-slug').value = 'home';
                 document.getElementById('pf-order').value = '0';
                 document.getElementById('pf-status').checked = true;
                 document.getElementById('pf-is-featured').checked = false;
@@ -202,10 +204,12 @@
                     try {
                         jsonData = JSON.parse(jsonRaw);
                         if (jsonData !== null && typeof jsonData !== 'object') {
-                            throw new Error('JSON data must be an object.');
+                            setMsg('JSON data must be an object like {"key":"value"}, not a plain value.', true);
+                            return null; // signal to stop submit
                         }
                     } catch (e) {
-                        throw new Error('Invalid JSON in JSON data field: ' + (e.message || 'parse error'));
+                        setMsg('JSON data is invalid. Use {"key":"value"} format or leave it empty.', true);
+                        return null; // signal to stop submit
                     }
                 }
 
@@ -226,6 +230,29 @@
                     category_id: cat ? parseInt(cat, 10) : null,
                 };
                 return payload;
+            }
+
+            async function loadPageSlug() {
+                try {
+                    const res = await window.FrontendApi.apiFetch('{{ url('/api/pageslug') }}', {
+                        method: 'GET',
+                        headers: window.FrontendApi.authHeadersJson()
+                    });
+                    const items = (res && res.data) ? res.data : [];
+                    const sel = document.getElementById('pf-page-slug');
+                    if (!sel) return;
+                    if (!items.length) {
+                        sel.innerHTML = '<option value="home">home</option>';
+                        return;
+                    }
+                    sel.innerHTML = items.map(function (p) {
+                        return `<option value="${p.slug}">${p.name} → ${p.slug}</option>`;
+                    }).join('');
+                } catch (err) {
+                    console.error('loadPageSlug error:', err);
+                    const sel = document.getElementById('pf-page-slug');
+                    if (sel) sel.innerHTML = '<option value="home">home</option>';
+                }
             }
 
             async function loadCategories() {
@@ -317,6 +344,7 @@
 
                 try {
                     const payload = buildPayloadFromForm();
+                    if (payload === null) return; // ← JSON validation failed, message already shown
 
                     if (id && hasFile) {
                         const fd = new FormData();
@@ -418,6 +446,7 @@
 
             (async function init() {
                 try {
+                    await loadPageSlug();      // ← add this first
                     await loadCategories();
                     await loadTable();
                 } catch (err) {

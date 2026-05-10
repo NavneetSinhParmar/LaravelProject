@@ -29,7 +29,9 @@
             <div class="row">
                 <div>
                     <label for="page_slug">Page slug</label>
-                    <input id="page_slug" name="page_slug" value="home" required>
+                    <select id="page_slug" name="page_slug" required>
+                        <option value="">Loading…</option>
+                    </select>
                 </div>
                 <div>
                     <label for="rating">Rating (1–5)</label>
@@ -113,7 +115,7 @@
             function resetForm() {
                 formEl.reset();
                 document.getElementById('testimonial-id').value = '';
-                document.getElementById('page_slug').value = 'home';
+                // document.getElementById('page_slug').value = 'home';
                 document.getElementById('rating').value = '5';
                 document.getElementById('sort_order').value = '0';
                 document.getElementById('status').value = '1';
@@ -127,7 +129,7 @@
                 document.getElementById('name').value          = t.name || '';
                 document.getElementById('designation').value   = t.designation || '';
                 document.getElementById('company').value       = t.company || '';
-                document.getElementById('page_slug').value     = t.page_slug || 'home';
+                document.getElementById('page_slug').value     = t.page_slug || '';
                 document.getElementById('rating').value        = String(t.rating ?? 5);
                 document.getElementById('sort_order').value    = String(t.sort_order ?? 0);
                 document.getElementById('status').value        = String(t.status ?? 1);
@@ -135,6 +137,29 @@
                 saveBtn.textContent  = 'Update';
                 formTitle.textContent = 'Edit testimonial #' + t.id;
                 setMessage('Edit mode — change fields and save. Leave image empty to keep the current file.');
+            }
+
+            async function loadPageSlug() {
+                try {
+                    const res = await window.FrontendApi.apiFetch('{{ url('/api/pageslug') }}', {
+                        method: 'GET',
+                        headers: window.FrontendApi.authHeadersJson()  // ← auth header fix
+                    });
+                    const items = (res && res.data) ? res.data : [];
+                    const sel = document.getElementById('page_slug');
+                    if (!sel) return;
+                    if (!items.length) {
+                        sel.innerHTML = '<option value="home">home</option>';
+                        return;
+                    }
+                    sel.innerHTML = items.map(function (p) {
+                        return `<option value="${p.slug}">${p.name} → ${p.slug}</option>`;
+                    }).join('');
+                } catch (err) {
+                    console.error('loadPageSlug error:', err);
+                    const sel = document.getElementById('page_slug');
+                    if (sel) sel.innerHTML = '<option value="home">home</option>';
+                }
             }
 
             async function loadTable() {
@@ -273,8 +298,15 @@
                 }
             });
 
-            loadTable().catch(function (err) {
-                tableEl.innerHTML = '<tr><td colspan="10" class="err">' + (err.message || 'Failed to load testimonials.') + '</td></tr>';
+             // REPLACE with this:
+            loadPageSlug().then(function () {
+                loadTable().catch(function (err) {
+                    tableEl.innerHTML = '<tr><td colspan="7" class="err">' + (err.message || 'Failed to load sliders.') + '</td></tr>';
+                });
+            }).catch(function () {
+                loadTable().catch(function (err) {
+                    tableEl.innerHTML = '<tr><td colspan="7" class="err">' + (err.message || 'Failed to load sliders.') + '</td></tr>';
+                });
             });
         })();
     </script>
