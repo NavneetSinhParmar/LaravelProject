@@ -10,23 +10,16 @@
 
     <div class="card">
         <h2 id="form-title">Create FAQ</h2>
-
         <form id="faq-form">
             <input type="hidden" id="faq-id">
-
             <div class="row">
                 <div>
-                    <label for="page_slug">Page slug</label>
-                    <select id="page_slug" name="page_slug" required>
+                    <label for="pageslug">Page slug</label>
+                    <select id="pageslug" name="pageslug" required>
                         <option value="">Loading…</option>
                     </select>
                 </div>
-
-                <div>
-                    <label for="category">Category (optional)</label>
-                    <input id="category" name="category">
-                </div>
-
+                <!-- category removed -->
                 <div>
                     <label for="order">Order</label>
                     <input id="order" name="order" type="number" min="0" value="0">
@@ -64,12 +57,10 @@
                     </select>
                 </div>
             </div>
-
             <div class="actions" style="margin-top:12px;">
                 <button type="submit" id="save-btn">Save</button>
                 <button type="button" class="secondary" id="reset-btn">Reset</button>
             </div>
-
             <div id="faq-message" class="message"></div>
         </form>
     </div>
@@ -83,7 +74,6 @@
                     <tr>
                         <th>ID</th>
                         <th>Page</th>
-                        <th>Category</th>
                         <th>Question</th>
                         <th>Featured</th>
                         <th>Status</th>
@@ -94,7 +84,7 @@
 
                 <tbody id="faq-table">
                     <tr>
-                        <td colspan="8" class="muted">Loading…</td>
+                        <td colspan="7" class="muted">Loading…</td>
                     </tr>
                 </tbody>
             </table>
@@ -128,8 +118,7 @@
 
     function fillForm(f) {
         document.getElementById('faq-id').value = f.id;
-        document.getElementById('page_slug').value = f.page_slug || '';
-        document.getElementById('category').value = f.category || '';
+        document.getElementById('pageslug').value = f.pageslug || '';
         document.getElementById('question').value = f.question || '';
         document.getElementById('answer').value = f.answer || '';
         document.getElementById('status').value = String(f.status ? 1 : 0);
@@ -139,24 +128,35 @@
         formTitle.textContent = 'Edit FAQ #' + f.id;
     }
 
-    async function loadPageSlugs() {
-        try {
-            const res = await window.FrontendApi.apiFetch('{{ url('/api/page-slugs') }}', { method: 'GET' });
-            const items = (res && res.data) ? res.data : [];
-            const sel = document.getElementById('page_slug');
-            if (!sel) return;
-            if (!items.length) {
-                sel.innerHTML = '<option value="home">home</option>';
-                return;
-            }
-            sel.innerHTML = items.map(function (p) {
-                return `<option value="${p.slug}">${p.name} → ${p.slug}</option>`;
-            }).join('');
-        } catch (err) {
-            const sel = document.getElementById('page_slug');
-            if (sel) sel.innerHTML = '<option value="home">home</option>';
+    async function loadPageSlug() {
+    try {
+        const res = await window.FrontendApi.apiFetch('{{ url('/api/pageslug') }}', { 
+            method: 'GET', 
+            headers: window.FrontendApi.authHeadersJson()  // ← add this
+        });
+
+        console.log('pageslug response:', res); // ← add this to debug
+
+        const items = (res && res.data) ? res.data : [];
+        const sel = document.getElementById('pageslug');
+        if (!sel) return;
+
+        if (!items.length) {
+            sel.innerHTML = '<option value="home">home</option>';
+            return;
         }
+
+        sel.innerHTML = items.map(function (p) {
+            // adjust p.slug / p.name to match your actual API response keys
+            return `<option value="${p.slug}">${p.name} → ${p.slug}</option>`;
+        }).join('');
+
+    } catch (err) {
+        console.error('loadPageSlug error:', err); // ← see exact error
+        const sel = document.getElementById('pageslug');
+        if (sel) sel.innerHTML = '<option value="home">home</option>';
     }
+}
 
     async function loadTable() {
         const res = await window.FrontendApi.apiFetch('{{ url('/api/faqs') }}', { method: 'GET', headers: window.FrontendApi.authHeadersJson() });
@@ -169,8 +169,7 @@
             return `
                 <tr>
                     <td>${f.id}</td>
-                    <td>${f.page_slug}</td>
-                    <td>${f.category || ''}</td>
+                    <td>${f.pageslug}</td>
                     <td>${f.question}</td>
                     <td>${f.is_featured ? 'Yes' : 'No'}</td>
                     <td>${f.status ? 'Active' : 'Inactive'}</td>
@@ -190,8 +189,7 @@
         const id = document.getElementById('faq-id').value;
         try {
             const payload = {
-                page_slug: document.getElementById('page_slug').value,
-                category: document.getElementById('category').value,
+                pageslug: document.getElementById('pageslug').value,
                 question: document.getElementById('question').value,
                 answer: document.getElementById('answer').value,
                 status: Number(document.getElementById('status').value) === 1,
@@ -240,13 +238,13 @@
     });
 
     // load page slugs first so the select is populated
-    loadPageSlugs().then(function () {
+    loadPageSlug().then(function () {
         loadTable().catch(function (err) {
-            tableEl.innerHTML = `<tr><td colspan="8" class="err">${err.message || 'Failed to load FAQs.'}</td></tr>`;
+            tableEl.innerHTML = `<tr><td colspan="7" class="err">${err.message || 'Failed to load FAQs.'}</td></tr>`;
         });
     }).catch(function () {
         loadTable().catch(function (err) {
-            tableEl.innerHTML = `<tr><td colspan="8" class="err">${err.message || 'Failed to load FAQs.'}</td></tr>`;
+            tableEl.innerHTML = `<tr><td colspan="7" class="err">${err.message || 'Failed to load FAQs.'}</td></tr>`;
         });
     });
 

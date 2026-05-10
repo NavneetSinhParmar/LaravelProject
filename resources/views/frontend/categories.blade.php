@@ -20,12 +20,7 @@
             <input type="hidden" id="category-id">
 
             <div class="row">
-                <div>
-                    <label for="page_slug">Page slug</label>
-                    <select id="page_slug" name="page_slug" required>
-                        <option value="">Loading…</option>
-                    </select>
-                </div>
+                <!-- page_slug removed -->
 
                 <div>
                     <label for="sort_order">Order</label>
@@ -88,7 +83,7 @@
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Page Slug</th>
+                        <!-- Page Slug column removed -->
                         <th>Name</th>
                         <th>Link</th>
                         <th>Status</th>
@@ -100,7 +95,7 @@
 
                 <tbody id="category-table">
                     <tr>
-                        <td colspan="8" class="muted">
+                        <td colspan="7" class="muted">
                             Loading…
                         </td>
                     </tr>
@@ -141,14 +136,7 @@
         formEl.reset();
 
         document.getElementById('category-id').value = '';
-        // select first available page slug or fallback to 'home'
-        const ps = document.getElementById('page_slug');
-        if (ps && ps.options.length) {
-            ps.selectedIndex = 0;
-        } else if (ps) {
-            ps.innerHTML = '<option value="home">home</option>';
-            ps.value = 'home';
-        }
+        // page_slug removed
         document.getElementById('sort_order').value = '0';
         document.getElementById('status').value = '1';
 
@@ -161,10 +149,7 @@
     function fillForm(c) {
 
         document.getElementById('category-id').value = c.id;
-        const ps = document.getElementById('page_slug');
-        if (ps) {
-            try { ps.value = c.page_slug || ps.options[0]?.value || 'home'; } catch(e) { ps.value = c.page_slug || 'home'; }
-        }
+        // page_slug removed
         document.getElementById('sort_order').value = String(c.sort_order ?? 0);
         document.getElementById('status').value = String(c.status ?? 1);
 
@@ -212,7 +197,6 @@
             return `
                 <tr>
                     <td>${c.id}</td>
-                    <td>${c.page_slug || ''}</td>
                     <td>${c.name || ''}</td>
                     <td>
                         ${
@@ -250,24 +234,8 @@
         }).join('');
     }
 
-    async function loadPageSlugs() {
-        try {
-            const res = await window.FrontendApi.apiFetch('{{ url('/api/page-slugs') }}', { method: 'GET' });
-            const items = (res && res.data) ? res.data : [];
-            const sel = document.getElementById('page_slug');
-            if (!sel) return;
-            if (!items.length) {
-                sel.innerHTML = '<option value="home">home</option>';
-                return;
-            }
-            sel.innerHTML = items.map(function (p) {
-                return `<option value="${p.slug}">${p.name} → ${p.slug}</option>`;
-            }).join('');
-        } catch (err) {
-            const sel = document.getElementById('page_slug');
-            if (sel) sel.innerHTML = '<option value="home">home</option>';
-        }
-    }
+    // page slugs not needed for categories
+    async function loadPageSlug() { }
 
     formEl.addEventListener('submit', async function (e) {
 
@@ -287,7 +255,7 @@
 
                 const fd = new FormData();
 
-                fd.append('page_slug', document.getElementById('page_slug').value);
+                // page_slug removed
                 fd.append('name', document.getElementById('name').value);
                 fd.append('status', document.getElementById('status').value);
                 fd.append('sort_order', document.getElementById('sort_order').value || '0');
@@ -308,7 +276,6 @@
             } else if (id) {
 
                 const payload = {
-                    page_slug: document.getElementById('page_slug').value,
                     name: document.getElementById('name').value,
                     status: Number(document.getElementById('status').value),
                     sort_order: document.getElementById('sort_order').value
@@ -331,7 +298,7 @@
 
                 const fd = new FormData();
 
-                fd.append('page_slug', document.getElementById('page_slug').value);
+                // page_slug removed
                 fd.append('name', document.getElementById('name').value);
                 fd.append('status', document.getElementById('status').value);
                 fd.append('sort_order', document.getElementById('sort_order').value || '0');
@@ -420,14 +387,11 @@
         }
     });
 
-    // Load page slugs first, then categories
-    loadPageSlugs().then(function () {
-        return loadTable();
-    }).catch(function (err) {
-
+    // Load categories
+    loadTable().catch(function (err) {
         tableEl.innerHTML = `
             <tr>
-                <td colspan="8" class="err">
+                <td colspan="7" class="err">
                     ${err.message || 'Failed to load categories.'}
                 </td>
             </tr>

@@ -21,7 +21,7 @@ Route::middleware(\App\Http\Middleware\RestrictApiByOrigin::class)->group(functi
     Route::get('portfolio', [PortfolioController::class, 'index']);
     Route::get('portfolio/{id}', [PortfolioController::class, 'show']);
     Route::get('categories', [PortfolioController::class, 'categories']);
-    Route::get('page-slugs', [PageSlugController::class, 'index']);
+    Route::get('pageslug', [PageSlugController::class, 'index']);
 
     Route::get('products', [ProductController::class, 'index']);
     Route::get('products/{id}', [ProductController::class, 'show']);
@@ -47,7 +47,7 @@ Route::middleware('api.token')->group(function (): void {
     Route::get('portfolio-categories', [PortfolioController::class, 'categories']);
     Route::apiResource('categories', CategoriesController::class);
     Route::post('categories/{category}', [CategoriesController::class, 'update']);
-    Route::apiResource('page-slugs', PageSlugController::class);
+    Route::apiResource('pageslug', PageSlugController::class);
     Route::apiResource('faqs', FaqController::class);
     Route::apiResource('portfolio', PortfolioController::class);
     Route::post('portfolio/{portfolio}', [PortfolioController::class, 'update']);

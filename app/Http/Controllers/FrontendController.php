@@ -49,7 +49,7 @@ class FrontendController extends Controller
         return view('frontend.clients');
     }
 
-     public function testimonials(): View
+    public function testimonials(): View
     {
         return view('frontend.testimonials');
     }
@@ -59,12 +59,12 @@ class FrontendController extends Controller
         return view('frontend.products');
     }
 
-     public function faq(): View
+    public function faq(): View
     {
         return view('frontend.faq');
     }
 
-     public function pageslug(): View
+    public function pageslug(): View
     {
         return view('frontend.pageslug');
     }

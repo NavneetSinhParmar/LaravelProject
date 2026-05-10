@@ -9,7 +9,7 @@
         :root { --bg: #f5f7fb; --card: #fff; --text: #0f172a; --muted: #64748b; --border: #e5e7eb; --primary: #2563eb; --danger: #dc2626; }
         * { box-sizing: border-box; }
         body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 0; background: var(--bg); color: var(--text); }
-        .shell { max-width: 1100px; margin: 0 auto; padding: 20px; }
+        .shell { margin: 0 auto; padding: 20px; }
         .top { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; margin-bottom: 20px; }
         .brand { font-weight: 700; font-size: 1.1rem; }
         nav { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }

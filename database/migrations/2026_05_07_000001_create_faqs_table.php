@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('faqs', function (Blueprint $table): void {
             $table->id();
-            $table->string('page_slug')->index();
+            $table->string('pageslug')->index();
             $table->string('category')->nullable();
             $table->string('question');
             $table->text('answer')->nullable();

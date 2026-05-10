@@ -50,13 +50,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/testimonials', [FrontendController::class, 'testimonials'])->name('frontend.testimonials');
     Route::get('/dashboard/products', [FrontendController::class, 'products'])->name('frontend.products');
 
-    // NEW: Portfolio Page
+    // Portfolio pages
     Route::get('/dashboard/portfolio', [FrontendController::class, 'portfolio'])->name('frontend.portfolio');
     Route::get('/dashboard/categories', [FrontendController::class, 'categories'])->name('frontend.categories');
 
     // Page Slugs admin UI
     Route::get('/dashboard/pageslug', function () {
-        return view('frontend.page-slugs');
+        return view('frontend.pageslug');
     })->name('frontend.pageslug');
 
     // FAQs admin UI
@@ -92,7 +92,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/Clients/{id}', [ClientsController::class, 'destroy']);
 
     // =========================
-    // testimonials CRUD (web)
+    // Testimonials CRUD (web)
     // =========================
     Route::get('/testimonials', [TestimonialsController::class, 'index']);
     Route::get('/testimonials/{id}', [TestimonialsController::class, 'show']);

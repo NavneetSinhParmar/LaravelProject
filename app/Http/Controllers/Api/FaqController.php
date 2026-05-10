@@ -13,8 +13,8 @@ class FaqController extends Controller
     {
         $q = Faq::query();
 
-        if ($request->filled('page_slug')) {
-            $q->where('page_slug', $request->string('page_slug'));
+        if ($request->filled('pageslug')) {
+            $q->where('pageslug', $request->string('pageslug'));
         }
 
         if ($request->filled('is_featured')) {
@@ -29,7 +29,7 @@ class FaqController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'page_slug' => ['required', 'string', 'max:255'],
+            'pageslug' => ['required', 'string', 'max:255'],
             'category' => ['nullable', 'string', 'max:255'],
             'question' => ['required', 'string', 'max:1000'],
             'answer' => ['nullable', 'string'],
@@ -51,7 +51,7 @@ class FaqController extends Controller
     public function update(Request $request, Faq $faq): JsonResponse
     {
         $validated = $request->validate([
-            'page_slug' => ['sometimes', 'required', 'string', 'max:255'],
+            'pageslug' => ['sometimes', 'required', 'string', 'max:255'],
             'category' => ['nullable', 'string', 'max:255'],
             'question' => ['sometimes', 'required', 'string', 'max:1000'],
             'answer' => ['nullable', 'string'],
