@@ -9,7 +9,7 @@
         :root { --bg: #f5f7fb; --card: #fff; --text: #0f172a; --muted: #64748b; --border: #e5e7eb; --primary: #2563eb; --danger: #dc2626; }
         * { box-sizing: border-box; }
         body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 0; background: var(--bg); color: var(--text); }
-        .shell { max-width: 1100px; margin: 0 auto; padding: 20px; }
+        .shell { margin: 0 auto; padding: 20px; }
         .top { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; margin-bottom: 20px; }
         .brand { font-weight: 700; font-size: 1.1rem; }
         nav { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
@@ -47,14 +47,45 @@
         <div class="top">
             <div class="brand">Admin</div>
             <nav>
-                <a href="{{ route('frontend.dashboard') }}" class="{{ request()->routeIs('frontend.dashboard') ? 'active' : '' }}">Dashboard</a>
-                <a href="{{ route('frontend.sliders') }}" class="{{ request()->routeIs('frontend.sliders') ? 'active' : '' }}">Sliders</a>
-                <a href="{{ route('frontend.portfolio') }}" class="{{ request()->routeIs('frontend.portfolio') ? 'active' : '' }}">Portfolio</a>
-                <a href="{{ route('frontend.products') }}" class="{{ request()->routeIs('frontend.products') ? 'active' : '' }}">Products</a>
-                <a href="{{ route('frontend.clients') }}" class="{{ request()->routeIs('frontend.clients') ? 'active' : '' }}">Clients</a>
-                <a href="{{ route('frontend.testimonials') }}" class="{{ request()->routeIs('frontend.testimonials') ? 'active' : '' }}">Testimonials</a>
+                @auth
+                    @if (Route::has('frontend.dashboard'))
+                        <a href="{{ route('frontend.dashboard') }}" class="{{ request()->routeIs('frontend.dashboard') ? 'active' : '' }}">Dashboard</a>
+                    @endif
 
-                <button type="button" class="danger" id="nav-logout">Logout</button>
+                    @if (Route::has('frontend.sliders'))
+                        <a href="{{ route('frontend.sliders') }}" class="{{ request()->routeIs('frontend.sliders') ? 'active' : '' }}">Sliders</a>
+                    @endif
+
+                    @if (Route::has('frontend.portfolio'))
+                        <a href="{{ route('frontend.portfolio') }}" class="{{ request()->routeIs('frontend.portfolio') ? 'active' : '' }}">Portfolio</a>
+                    @endif
+
+                    @if (Route::has('frontend.products'))
+                        <a href="{{ route('frontend.products') }}" class="{{ request()->routeIs('frontend.products') ? 'active' : '' }}">Products</a>
+                    @endif
+
+                    @if (Route::has('frontend.categories'))
+                        <a href="{{ route('frontend.categories') }}" class="{{ request()->routeIs('frontend.categories') ? 'active' : '' }}">Categories</a>
+                    @endif
+
+                    @if (Route::has('frontend.clients'))
+                        <a href="{{ route('frontend.clients') }}" class="{{ request()->routeIs('frontend.clients') ? 'active' : '' }}">Clients</a>
+                    @endif
+
+                    @if (Route::has('frontend.testimonials'))
+                        <a href="{{ route('frontend.testimonials') }}" class="{{ request()->routeIs('frontend.testimonials') ? 'active' : '' }}">Testimonials</a>
+                    @endif
+
+                    @if (Route::has('frontend.faq'))
+                        <a href="{{ route('frontend.faq') }}" class="{{ request()->routeIs('frontend.faq') ? 'active' : '' }}">FAQ</a>
+                    @endif
+
+                    @if (Route::has('frontend.pageslug'))
+                        <a href="{{ route('frontend.pageslug') }}" class="{{ request()->routeIs('frontend.pageslug') ? 'active' : '' }}">page slug</a>
+                    @endif
+
+                    <button type="button" class="danger" id="nav-logout">Logout</button>
+                @endauth
             </nav>
         </div>
 

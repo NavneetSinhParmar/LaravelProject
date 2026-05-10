@@ -10,6 +10,9 @@ class PortfolioCategory extends Model
         'name',
         'slug',
         'status',
+        'page_slug',
+        'sort_order',
+        'logo',
     ];
 
     protected function casts(): array

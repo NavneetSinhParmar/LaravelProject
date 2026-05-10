@@ -11,12 +11,14 @@ class CmsPageController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
+
+        // Accept `page_slug` for consistency with store/update rules.
         $data = $request->validate([
-            'page' => ['required', 'string'],
+            'page_slug' => ['required', 'string'],
             'status' => ['nullable', 'boolean'],
         ]);
 
-        $query = CmsPage::query()->where('page_slug', $data['page']);
+        $query = CmsPage::query()->where('page_slug', $data['page_slug']);
 
         if (array_key_exists('status', $data)) {
             $query->where('status', $data['status']);

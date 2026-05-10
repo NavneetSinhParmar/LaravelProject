@@ -15,11 +15,21 @@ class PortfolioController extends Controller
 {
     public function categories(): JsonResponse
     {
-        return new JsonResponse([
-            'data' => PortfolioCategory::query()
+        try {
+            $rows = PortfolioCategory::query()
                 ->where('status', true)
                 ->orderBy('name')
-                ->get(['id', 'name', 'slug']),
+                ->get(['id', 'name', 'slug']);
+        } catch (\Throwable $e) {
+            // If migrations haven't been run or columns are missing, return empty list
+            return new JsonResponse([
+                'data' => [],
+                'error' => 'Categories currently unavailable.'
+            ], 200);
+        }
+
+        return new JsonResponse([
+            'data' => $rows,
         ]);
     }
 

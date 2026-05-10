@@ -15,7 +15,9 @@
             <div class="row">
                 <div>
                     <label for="page_slug">Page slug</label>
-                    <input id="page_slug" name="page_slug" value="home" required>
+                    <select id="page_slug" name="page_slug" required>
+                        <option value="">Loading…</option>
+                    </select>
                 </div>
                 <div>
                     <label for="section_key">Section key</label>
@@ -102,7 +104,7 @@
             function resetForm() {
                 formEl.reset();
                 document.getElementById('slider-id').value = '';
-                document.getElementById('page_slug').value = 'home';
+                // REMOVE: document.getElementById('page_slug').value = 'home';  ← old input reset
                 document.getElementById('section_key').value = 'slider';
                 document.getElementById('sort_order').value = '0';
                 saveBtn.textContent = 'Save';
@@ -112,7 +114,7 @@
 
             function fillForm(s) {
                 document.getElementById('slider-id').value = s.id;
-                document.getElementById('page_slug').value = s.page_slug || 'home';
+                document.getElementById('page_slug').value = s.page_slug || '';  // works on <select> too
                 document.getElementById('section_key').value = s.section_key || 'slider';
                 document.getElementById('sort_order').value = String(s.sort_order ?? 0);
                 document.getElementById('title').value = s.title || '';
@@ -123,6 +125,30 @@
                 formTitle.textContent = 'Edit slider #' + s.id;
                 setMessage('Edit mode — change fields and save. Leave image empty to keep the current file.');
             }
+
+            async function loadPageSlug() {
+                try {
+                    const res = await window.FrontendApi.apiFetch('{{ url('/api/pageslug') }}', {
+                        method: 'GET',
+                        headers: window.FrontendApi.authHeadersJson()  // ← auth header fix
+                    });
+                    const items = (res && res.data) ? res.data : [];
+                    const sel = document.getElementById('page_slug');
+                    if (!sel) return;
+                    if (!items.length) {
+                        sel.innerHTML = '<option value="home">home</option>';
+                        return;
+                    }
+                    sel.innerHTML = items.map(function (p) {
+                        return `<option value="${p.slug}">${p.name} → ${p.slug}</option>`;
+                    }).join('');
+                } catch (err) {
+                    console.error('loadPageSlug error:', err);
+                    const sel = document.getElementById('page_slug');
+                    if (sel) sel.innerHTML = '<option value="home">home</option>';
+                }
+            }
+
 
             async function loadTable() {
                 const res = await window.FrontendApi.apiFetch('{{ url('/api/sliders') }}', {
@@ -255,8 +281,15 @@
                 }
             });
 
-            loadTable().catch(function (err) {
-                tableEl.innerHTML = '<tr><td colspan="7" class="err">' + (err.message || 'Failed to load sliders.') + '</td></tr>';
+            // REPLACE with this:
+            loadPageSlug().then(function () {
+                loadTable().catch(function (err) {
+                    tableEl.innerHTML = '<tr><td colspan="7" class="err">' + (err.message || 'Failed to load sliders.') + '</td></tr>';
+                });
+            }).catch(function () {
+                loadTable().catch(function (err) {
+                    tableEl.innerHTML = '<tr><td colspan="7" class="err">' + (err.message || 'Failed to load sliders.') + '</td></tr>';
+                });
             });
         })();
     </script>

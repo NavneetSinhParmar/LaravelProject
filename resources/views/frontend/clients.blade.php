@@ -19,7 +19,9 @@
                 </div>
                 <div>
                     <label for="page_slug">Page slug</label>
-                    <input id="page_slug" name="page_slug" value="home" required>
+                    <select id="page_slug" name="page_slug" required>
+                        <option value="">Loading…</option>
+                    </select>
                 </div>
                 <div>
                     <label for="sort_order">Sort order</label>
@@ -96,7 +98,7 @@
             function resetForm() {
                 formEl.reset();
                 document.getElementById('client-id').value = '';
-                document.getElementById('page_slug').value = 'home';
+                // document.getElementById('page_slug').value = 'home';
                 document.getElementById('sort_order').value = '0';
                 document.getElementById('status').value = '1';
                 saveBtn.textContent = 'Save';
@@ -114,6 +116,29 @@
                 saveBtn.textContent  = 'Update';
                 formTitle.textContent = 'Edit client #' + c.id;
                 setMessage('Edit mode — change fields and save. Leave logo empty to keep the current file.');
+            }
+
+             async function loadPageSlug() {
+                try {
+                    const res = await window.FrontendApi.apiFetch('{{ url('/api/pageslug') }}', {
+                        method: 'GET',
+                        headers: window.FrontendApi.authHeadersJson()  // ← auth header fix
+                    });
+                    const items = (res && res.data) ? res.data : [];
+                    const sel = document.getElementById('page_slug');
+                    if (!sel) return;
+                    if (!items.length) {
+                        sel.innerHTML = '<option value="home">home</option>';
+                        return;
+                    }
+                    sel.innerHTML = items.map(function (p) {
+                        return `<option value="${p.slug}">${p.name} → ${p.slug}</option>`;
+                    }).join('');
+                } catch (err) {
+                    console.error('loadPageSlug error:', err);
+                    const sel = document.getElementById('page_slug');
+                    if (sel) sel.innerHTML = '<option value="home">home</option>';
+                }
             }
 
             async function loadTable() {
@@ -244,8 +269,15 @@
                 }
             });
 
-            loadTable().catch(function (err) {
-                tableEl.innerHTML = '<tr><td colspan="8" class="err">' + (err.message || 'Failed to load client.') + '</td></tr>';
+            // REPLACE with this:
+            loadPageSlug().then(function () {
+                loadTable().catch(function (err) {
+                    tableEl.innerHTML = '<tr><td colspan="7" class="err">' + (err.message || 'Failed to load sliders.') + '</td></tr>';
+                });
+            }).catch(function () {
+                loadTable().catch(function (err) {
+                    tableEl.innerHTML = '<tr><td colspan="7" class="err">' + (err.message || 'Failed to load sliders.') + '</td></tr>';
+                });
             });
         })();
     </script>
