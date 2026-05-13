@@ -22,11 +22,11 @@ use App\Http\Controllers\Api\TestimonialsController;
 //     return Artisan::output();
 // });
 
-// Route::get('/clear-config', function () {
-//     Artisan::call('config:clear');
-//     Artisan::call('cache:clear');
-//     return 'Cleared!';
-// });
+Route::get('/clear-config', function () {
+    Artisan::call('config:clear');
+    Artisan::call('cache:clear');
+    return 'Cleared!';
+});
 
 // Route::get('/run-seed', function () {
 //     Artisan::call('db:seed', ['--force' => true]);
@@ -50,19 +50,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/testimonials', [FrontendController::class, 'testimonials'])->name('frontend.testimonials');
     Route::get('/dashboard/products', [FrontendController::class, 'products'])->name('frontend.products');
 
-    // Portfolio pages
+    // NEW: Portfolio Page
     Route::get('/dashboard/portfolio', [FrontendController::class, 'portfolio'])->name('frontend.portfolio');
-    Route::get('/dashboard/categories', [FrontendController::class, 'categories'])->name('frontend.categories');
-
-    // Page Slugs admin UI
-    Route::get('/dashboard/pageslug', function () {
-        return view('frontend.pageslug');
-    })->name('frontend.pageslug');
-
-    // FAQs admin UI
-    Route::get('/dashboard/faq', function () {
-        return view('frontend.faqs');
-    })->name('frontend.faq');
 
     Route::resource('users', UserController::class);
 
@@ -92,7 +81,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/Clients/{id}', [ClientsController::class, 'destroy']);
 
     // =========================
-    // Testimonials CRUD (web)
+    // testimonials CRUD (web)
     // =========================
     Route::get('/testimonials', [TestimonialsController::class, 'index']);
     Route::get('/testimonials/{id}', [TestimonialsController::class, 'show']);
