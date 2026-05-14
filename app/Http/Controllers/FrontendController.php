@@ -61,7 +61,7 @@ class FrontendController extends Controller
 
     public function faq(): View
     {
-        return view('frontend.faq');
+        return view('frontend.faqs');
     }
 
     public function pageslug(): View

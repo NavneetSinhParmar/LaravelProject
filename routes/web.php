@@ -49,6 +49,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/clients', [FrontendController::class, 'clients'])->name('frontend.clients');
     Route::get('/dashboard/testimonials', [FrontendController::class, 'testimonials'])->name('frontend.testimonials');
     Route::get('/dashboard/products', [FrontendController::class, 'products'])->name('frontend.products');
+    Route::get('/dashboard/faq', [FrontendController::class, 'faq'])->name('frontend.faq');
+    Route::get('/dashboard/pageslug', [FrontendController::class, 'pageslug'])->name('frontend.pageslug');
 
     // NEW: Portfolio Page
     Route::get('/dashboard/portfolio', [FrontendController::class, 'portfolio'])->name('frontend.portfolio');
