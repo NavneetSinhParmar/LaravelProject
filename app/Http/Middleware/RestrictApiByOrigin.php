@@ -12,7 +12,7 @@ class RestrictApiByOrigin
      * Handle an incoming request.
      * Allows only GET (and OPTIONS) requests coming from configured origins.
      */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next): Response
     {
         $allowed = array_filter(array_map('trim', explode(',', env('API_ALLOWED_ORIGINS', ''))));
 
@@ -28,30 +28,28 @@ class RestrictApiByOrigin
         }
 
         if (empty($allowed)) {
-            return response('API allowed origins not configured', 403);
+            return response()->json(['message' => 'API allowed origins not configured'], 403);
         }
 
-        // If origin is missing (non-browser clients) block access to enforce domain-only access
-        if (!$origin) {
-            return response('Forbidden origin', 403);
+        // Same-site admin requests often omit Origin; use current host.
+        if (! $origin) {
+            $origin = $request->getSchemeAndHttpHost();
         }
 
-        if (!in_array('*', $allowed) && !in_array($origin, $allowed, true)) {
-            return response('Forbidden origin', 403);
+        if (! in_array('*', $allowed, true) && ! in_array($origin, $allowed, true)) {
+            return response()->json(['message' => 'Forbidden origin'], 403);
         }
 
         if ($request->getMethod() !== 'GET' && $request->getMethod() !== 'OPTIONS') {
-            return response('Method not allowed', 405);
+            return response()->json(['message' => 'Method not allowed'], 405);
         }
 
-        // Handle preflight OPTIONS
         if ($request->getMethod() === 'OPTIONS') {
             $response = response('', 204);
         } else {
             $response = $next($request);
         }
 
-        // Add CORS headers for allowed origin
         if ($origin) {
             $response->headers->set('Access-Control-Allow-Origin', in_array('*', $allowed, true) ? '*' : $origin);
             $response->headers->set('Access-Control-Allow-Methods', 'GET, OPTIONS');

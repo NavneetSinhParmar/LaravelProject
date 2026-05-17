@@ -16,8 +16,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->redirectGuestsTo('/login');
         $middleware->alias([
             'api.token' => \App\Http\Middleware\ApiTokenAuth::class,
+            'api.token.or.origin' => \App\Http\Middleware\ApiTokenOrOrigin::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->shouldRenderJsonWhen(function ($request, \Throwable $e): bool {
+            return $request->is('api/*') || $request->expectsJson();
+        });
     })->create();

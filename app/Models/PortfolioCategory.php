@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class PortfolioCategory extends Model
 {
+    protected $table = 'portfolio_categories';
+
     protected $fillable = [
         'name',
         'slug',

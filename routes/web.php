@@ -49,6 +49,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/clients', [FrontendController::class, 'clients'])->name('frontend.clients');
     Route::get('/dashboard/testimonials', [FrontendController::class, 'testimonials'])->name('frontend.testimonials');
     Route::get('/dashboard/products', [FrontendController::class, 'products'])->name('frontend.products');
+    Route::get('/dashboard/categories', [FrontendController::class, 'categories'])->name('frontend.categories');
     Route::get('/dashboard/faq', [FrontendController::class, 'faq'])->name('frontend.faq');
     Route::get('/dashboard/pageslug', [FrontendController::class, 'pageslug'])->name('frontend.pageslug');
 
