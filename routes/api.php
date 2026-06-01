@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\ClientsController;
 use App\Http\Controllers\Api\TestimonialsController;
 use Illuminate\Support\Facades\Route;
 
+Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
 // Public read (website) OR admin read when Bearer token is sent.
@@ -33,6 +34,7 @@ Route::middleware('api.token.or.origin')->group(function (): void {
 });
 
 Route::post('products/{id}/download', [ProductController::class, 'download'])->whereNumber('id');
+Route::get('products/{id}/download-file', [ProductController::class, 'downloadFile'])->whereNumber('id')->name('products.download-file');
 
 Route::middleware('api.token')->group(function (): void {
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -60,6 +62,8 @@ Route::middleware('api.token')->group(function (): void {
     Route::put('products/{id}', [ProductController::class, 'update'])->whereNumber('id');
     Route::post('products/{id}', [ProductController::class, 'update'])->whereNumber('id');
     Route::delete('products/{id}', [ProductController::class, 'destroy'])->whereNumber('id');
+
+    Route::get('product-histories', [ProductController::class, 'histories']);
 
     Route::apiResource('sliders', SliderController::class)->except(['index', 'show']);
     Route::post('sliders/{id}', [SliderController::class, 'update']);

@@ -33,14 +33,25 @@ class PortfolioController extends Controller
         ]);
     }
 
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
+        $data = $request->validate([
+            'page_slug' => ['nullable', 'string'],
+            'status' => ['nullable', 'boolean'],
+        ]);
+
+        $query = Portfolio::query()->with('category');
+
+        if (array_key_exists('page_slug', $data)) {
+            $query->where('page_slug', $data['page_slug']);
+        }
+
+        if (array_key_exists('status', $data)) {
+            $query->where('status', $data['status']);
+        }
+
         return new JsonResponse([
-            'data' => Portfolio::query()
-                ->with('category')
-                ->orderBy('order')
-                ->orderByDesc('id')
-                ->get(),
+            'data' => $query->orderBy('order')->orderByDesc('id')->get(),
         ]);
     }
 

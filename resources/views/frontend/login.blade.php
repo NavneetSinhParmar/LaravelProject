@@ -19,19 +19,123 @@
 <body>
     <div class="wrap">
         <div class="card">
-            <h1>Project Login</h1>
+            <h1 id="form-title">Project Login</h1>
             <form id="login-form">
+                <div id="name-group" style="display:none;">
+                    <label for="name">Name</label>
+                    <input id="name" type="text" placeholder="Enter full name">
+                </div>
                 <label for="email">Email</label>
                 <input id="email" type="email" required placeholder="Enter email">
                 <label for="password">Password</label>
                 <input id="password" type="password" required placeholder="Enter password">
-                <button type="submit">Login</button>
+                <div id="confirm-group" style="display:none;">
+                    <label for="password-confirm">Confirm Password</label>
+                    <input id="password-confirm" type="password" placeholder="Confirm password">
+                </div>
+                <button type="submit" id="submit-button">Login</button>
+                <p style="margin-top: 16px; font-size: 14px; text-align: center;">
+                    <a href="#" id="toggle-auth">Create an account</a>
+                </p>
                 <div class="error" id="error"></div>
             </form>
         </div>
     </div>
 
     <script>
+        const state = { register: false };
+        const formTitle = document.getElementById('form-title');
+        const nameGroup = document.getElementById('name-group');
+        const confirmGroup = document.getElementById('confirm-group');
+        const submitButton = document.getElementById('submit-button');
+        const toggleLink = document.getElementById('toggle-auth');
+
+        toggleLink.addEventListener('click', (event) => {
+            event.preventDefault();
+            state.register = !state.register;
+            formTitle.textContent = state.register ? 'Create Account' : 'Project Login';
+            nameGroup.style.display = state.register ? 'block' : 'none';
+            confirmGroup.style.display = state.register ? 'block' : 'none';
+            submitButton.textContent = state.register ? 'Sign Up' : 'Login';
+            toggleLink.textContent = state.register ? 'Already have an account? Login' : 'Create an account';
+            document.getElementById('error').textContent = '';
+        });
+
+        document.getElementById('login-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const errorEl = document.getElementById('error');
+            errorEl.textContent = '';
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const body = { email, password };
+            let apiUrl = @json(url('/api/login'));
+
+            if (state.register) {
+                const name = document.getElementById('name').value.trim();
+                const passwordConfirm = document.getElementById('password-confirm').value;
+                body.name = name;
+                body.password_confirmation = passwordConfirm;
+                apiUrl = @json(url('/api/register'));
+            }
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                });
+
+                const raw = await response.text();
+                let data = {};
+                if (raw) {
+                    try {
+                        data = JSON.parse(raw);
+                    } catch (e) {
+                        throw new Error('Response was not JSON. Check server errors.');
+                    }
+                }
+
+                if (!response.ok || !data.token) {
+                    throw new Error(data.message || 'Authentication failed.');
+                }
+
+                const sessionRes = await fetch(@json(url('/web/login')), {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({ token: data.token })
+                });
+
+                const sessionRaw = await sessionRes.text();
+                let sessionData = {};
+                if (sessionRaw) {
+                    try {
+                        sessionData = JSON.parse(sessionRaw);
+                    } catch (e) {
+                        sessionData = {};
+                    }
+                }
+
+                if (!sessionRes.ok) {
+                    throw new Error(sessionData.message || 'Could not start web session (CSRF or /web/login failed).');
+                }
+
+                localStorage.setItem('api_token', data.token);
+                window.location.href = @json(route('frontend.dashboard'));
+            } catch (error) {
+                localStorage.removeItem('api_token');
+                errorEl.textContent = error.message;
+            }
+        });
         document.getElementById('login-form').addEventListener('submit', async (event) => {
             event.preventDefault();
 

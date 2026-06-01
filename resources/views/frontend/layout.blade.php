@@ -81,7 +81,7 @@
                     @endif
 
                     @if (Route::has('frontend.pageslug'))
-                        <a href="{{ route('frontend.pageslug') }}" class="{{ request()->routeIs('frontend.pageslug') ? 'active' : '' }}">page slug</a>
+                        <a href="{{ route('frontend.pageslug') }}" class="{{ request()->routeIs('frontend.pageslug') ? 'active' : '' }}">Page Slug</a>
                     @endif
 
                     <button type="button" class="danger" id="nav-logout">Logout</button>

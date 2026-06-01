@@ -7,11 +7,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ProductDownload extends Model
 {
-    public $timestamps = false;
-
     protected $fillable = [
         'product_id',
+        'user_id',
+        'email',
         'ip_address',
+        'user_agent',
+        'fingerprint',
+        'product_type',
+        'action_type',
+        'download_type',
+        'download_count',
         'downloaded_at',
     ];
 

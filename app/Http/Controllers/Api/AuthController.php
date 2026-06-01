@@ -38,6 +38,30 @@ class AuthController extends Controller
         ]);
     }
 
+    public function register(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        $plainToken = Str::random(60);
+
+        $user = User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+            'api_token' => hash('sha256', $plainToken),
+        ]);
+
+        return new JsonResponse([
+            'message' => 'Registration successful.',
+            'token' => $plainToken,
+            'user' => $user,
+        ], 201);
+    }
+
     public function logout(Request $request): JsonResponse
     {
         $request->user()->forceFill([
