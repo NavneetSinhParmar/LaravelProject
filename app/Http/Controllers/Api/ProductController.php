@@ -213,7 +213,6 @@ class ProductController extends Controller
         $data = $request->validate([
             'email' => ['required', 'email'],
             'ip_address' => ['nullable', 'ip'],
-            'fingerprint' => ['nullable', 'string', 'max:255'],
         ]);
 
         $product = Product::query()->findOrFail($id);
@@ -241,7 +240,6 @@ class ProductController extends Controller
 
         $email = strtolower(trim($data['email']));
         $ip = $data['ip_address'] ? (string) $data['ip_address'] : (string) $request->ip();
-        $fingerprint = $request->string('fingerprint')->trim();
 
         $downloadCount = ProductDownload::query()
             ->where('product_id', $product->id)
@@ -256,7 +254,7 @@ class ProductController extends Controller
             ], 403);
         }
 
-        DB::transaction(function () use ($product, $ip, $email, $fingerprint, $request): void {
+        DB::transaction(function () use ($product, $ip, $email, $request): void {
             $downloadData = [
                 'product_id' => $product->id,
                 'email' => $email,
@@ -271,9 +269,6 @@ class ProductController extends Controller
             }
             if (Schema::hasColumn('product_downloads', 'user_agent')) {
                 $downloadData['user_agent'] = $request->header('User-Agent');
-            }
-            if (Schema::hasColumn('product_downloads', 'fingerprint')) {
-                $downloadData['fingerprint'] = $fingerprint ?: null;
             }
             if (Schema::hasColumn('product_downloads', 'product_type')) {
                 $downloadData['product_type'] = $product->product_type;
@@ -330,6 +325,33 @@ class ProductController extends Controller
 
         if ($request->filled('email')) {
             $query->where('email', $request->string('email')->trim());
+        }
+
+        if ($request->filled('from')) {
+            $query->where('downloaded_at', '>=', $request->input('from'));
+        }
+
+        if ($request->filled('to')) {
+            $query->where('downloaded_at', '<=', $request->input('to'));
+        }
+
+        return new JsonResponse([
+            'data' => $query->orderByDesc('downloaded_at')->paginate(50),
+        ]);
+    }
+
+    public function historiesByIp(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'ip_address' => ['required', 'ip'],
+        ]);
+
+        $query = ProductDownload::query()
+            ->with('product:id,name')
+            ->where('ip_address', $data['ip_address']);
+
+        if ($request->filled('product_id')) {
+            $query->where('product_id', $request->input('product_id'));
         }
 
         if ($request->filled('from')) {
