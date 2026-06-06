@@ -346,24 +346,13 @@ class ProductController extends Controller
             'ip_address' => ['required', 'ip'],
         ]);
 
-        $query = ProductDownload::query()
-            ->with('product:id,name')
-            ->where('ip_address', $data['ip_address']);
-
-        if ($request->filled('product_id')) {
-            $query->where('product_id', $request->input('product_id'));
-        }
-
-        if ($request->filled('from')) {
-            $query->where('downloaded_at', '>=', $request->input('from'));
-        }
-
-        if ($request->filled('to')) {
-            $query->where('downloaded_at', '<=', $request->input('to'));
-        }
+        $download = ProductDownload::query()
+            ->where('ip_address', $data['ip_address'])
+            ->first();
 
         return new JsonResponse([
-            'data' => $query->orderByDesc('downloaded_at')->paginate(50),
+            'email' => $download?->email,
+            'ip_address' => $download ? $data['ip_address'] : null,
         ]);
     }
 
