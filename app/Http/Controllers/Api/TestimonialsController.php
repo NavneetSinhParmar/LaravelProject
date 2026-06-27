@@ -88,7 +88,7 @@ class TestimonialsController extends Controller
         return $request->validate([
             'page_slug' => $pageSlug,
             'name' => $nameRule,
-            'image' => ['nullable', 'file', 'image', 'max:5120'],
+            'image' => ['nullable', 'file', 'image', 'max:8192'],
             'designation' => ['nullable', 'string', 'max:255'],
             'company' => ['nullable', 'string', 'max:255'],
             'message' => ['nullable', 'string'],

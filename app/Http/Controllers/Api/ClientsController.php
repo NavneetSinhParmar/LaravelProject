@@ -88,7 +88,7 @@ class ClientsController extends Controller
         return $request->validate([
             'page_slug' => $pageSlug,
             'name' => $nameRule,
-            'logo' => ['nullable', 'file', 'image', 'max:5120'],
+            'logo' => ['nullable', 'file', 'image', 'max:8192'],
             'link' => ['nullable', 'string', 'max:500'],
             'status' => ['nullable', 'boolean'],
             'sort_order' => ['nullable', 'integer', 'min:0'],

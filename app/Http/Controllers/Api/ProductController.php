@@ -374,10 +374,10 @@ class ProductController extends Controller
             'is_featured' => ['nullable', 'boolean'],
             'is_best_seller' => ['nullable', 'boolean'],
             'gallery_images' => ['nullable', 'array'],
-            'gallery_images.*' => ['file', 'image', 'max:5120'],
+            'gallery_images.*' => ['file', 'image', 'max:8192'],
             'view_count' => ['nullable', 'integer', 'min:0'],
             'sales_count' => ['nullable', 'integer', 'min:0'],
-            'primary_image' => ['nullable', 'file', 'image', 'max:5120'],
+            'primary_image' => ['nullable', 'file', 'image', 'max:8192'],
             'download_file' => [$update ? 'nullable' : 'required', 'file', 'max:51200'],
         ]);
 

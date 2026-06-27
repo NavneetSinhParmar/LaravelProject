@@ -139,7 +139,7 @@ class PortfolioController extends Controller
             'is_featured' => ['nullable', 'boolean'],
             'status' => ['nullable', 'boolean'],
             'json_data' => ['nullable'],
-            'image' => ['nullable', 'file', 'image', 'max:5120'],
+            'image' => ['nullable', 'file', 'image', 'max:8192'],
         ]);
 
         return $this->normalizeJsonDataField($validated);

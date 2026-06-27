@@ -33,7 +33,7 @@ class CategoriesController extends Controller
             'sort_order' => ['nullable', 'integer'],
             'status' => ['nullable', 'boolean'],
             'slug' => ['nullable', 'string', 'max:255'],
-            'logo' => ['nullable', 'file', 'image', 'max:5120'],
+            'logo' => ['nullable', 'file', 'image', 'max:8192'],
         ]);
 
         try {
@@ -69,7 +69,7 @@ class CategoriesController extends Controller
             'sort_order' => ['nullable', 'integer'],
             'status' => ['nullable', 'boolean'],
             'slug' => ['nullable', 'string', 'max:255'],
-            'logo' => ['nullable', 'file', 'image', 'max:5120'],
+            'logo' => ['nullable', 'file', 'image', 'max:8192'],
         ]);
 
         try {

@@ -117,7 +117,7 @@ class SliderController extends Controller
             'html_content' => ['nullable', 'string'],
             'link'         => ['nullable', 'string', 'max:255'],
             'sort_order'   => ['nullable', 'integer', 'min:0'],
-            'image'        => ['nullable', 'file', 'image', 'max:5120'],
+            'image'        => ['nullable', 'file', 'image', 'max:8192'],
         ]);
 
         if ($request->hasFile('image')) {
@@ -148,7 +148,7 @@ class SliderController extends Controller
             'html_content' => ['nullable', 'string'],
             'link'         => ['nullable', 'string', 'max:255'],
             'sort_order'   => ['nullable', 'integer', 'min:0'],
-            'image'        => ['nullable', 'file', 'image', 'max:5120'],
+            'image'        => ['nullable', 'file', 'image', 'max:8192'],
         ]);
 
         if ($request->hasFile('image')) {
